@@ -1,0 +1,128 @@
+/*队列的链表实现*/
+#include <stdio.h>
+#include <stdlib.h>
+#include "Queue.h"
+/*/
+int testQueueMain() {
+	Queue* queue = NULL;
+	int i = 0, size = 10;
+
+	printf("创建空队列：\n");
+	queue = creatQueue(size);
+	printAll(queue);
+
+	printf("设置元素：\n");
+	while (isFullQueue(queue) == 0) {
+		append(queue, i++);
+		printAll(queue);
+	}
+
+	printf("边界测试，在满队列状态下继续add：\n");
+	append(queue, 10);
+
+	printf("delete * 5：\n");
+	serve(queue, NULL);
+	serve(queue, NULL);
+	serve(queue, NULL);
+	serve(queue, NULL);
+	serve(queue, NULL);
+	printAll(queue);
+
+	printf("add * 2：\n");
+	append(queue, 111);
+	append(queue, 222);
+	printAll(queue);
+
+	printf("delete所有内容：\n");
+	while (isEmptyQueue(queue) == 0) {
+		serve(queue, NULL);
+		printAll(queue);
+	}
+
+	printf("边界测试，在空状态下继续delete：\n");
+	serve(queue, NULL);//边界测试
+
+	system("pause");
+ 	return 0;
+}
+//*/
+
+//生成长度为MaxSize的空队列；
+Queue* creatQueue(int maxSize) {
+	Queue* queue = NULL;
+	queue = (Queue*)malloc(sizeof(Queue));
+	queue->maxSize = maxSize;
+	queue->currentSize = 0;
+	queue->first = NULL;
+	queue->last = NULL;
+	return queue;
+}
+
+// 判断队列Q是否已满；
+int isFullQueue(Queue* q) {
+	return q->currentSize == q->maxSize;
+}
+
+// 将数据元素item插入队列Q中；
+void append(Queue* q, TreeNode* item) {
+	QueueNode* t = NULL;
+	if (!isFullQueue(q)) {
+		t = (QueueNode*)malloc(sizeof(QueueNode));
+		t->element = item;
+		t->next = NULL;
+		if (isEmptyQueue(q))	q->first = q->last = t;
+		else q->last->next = t;
+		q->last = t;
+		q->currentSize++;
+		//printf("add %d\n", item);
+		//为了方便观察打印信息
+	} else {
+		printf("Queue is Full!\n");
+	}
+}
+
+// 判断队列Q是否为空；
+int isEmptyQueue(Queue* q) {
+	return q->currentSize == 0;
+}
+
+// 将队头数据元素从队列中删除并返回。
+int serve(Queue* q, TreeNode** firstItem) {
+	int ret;
+	QueueNode* t = q->first;
+	if (!isEmptyQueue(q)) {
+		if (firstItem != NULL) {
+			*firstItem = q->first->element;
+		}
+		//printf("delete %d\n", q->first->element);
+		//为了方便观察打印信息
+		q->first = q->first->next;
+		free(t);
+		q->currentSize--;
+		ret = 1;
+		
+	} else {
+		printf("Queue is Empty!\n");
+		ret = 0;
+	}
+	return ret;
+}
+
+/*/
+//预览队列当前状态
+void printAll(Queue* q) {
+	int i = 0;
+	QueueNode* t = NULL;
+	if (!isEmptyQueue(q)) {
+		t = q->first;
+		while (t != NULL) {
+			printf("element[%d] = %d\n", i++, t->element);
+			t = t->next;
+		}
+		
+	} else {
+		printf("Empty Queue\n");
+	}
+	printf("\n");
+}
+//*/
